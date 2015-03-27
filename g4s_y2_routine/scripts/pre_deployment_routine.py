@@ -8,6 +8,13 @@ from dateutil.tz import tzlocal
 from routine_behaviours.robot_routine import RobotRoutine
     
 
+def create_wait_task(waypoint_name, duration=rospy.Duration(30)):
+    patrol_task = Task(action='wait_action', start_node_id=waypoint_name, end_node_id=waypoint_name, max_duration=duration)
+    task_utils.add_time_argument(patrol_task, rospy.Time())
+    task_utils.add_duration_argument(patrol_task, duration)       
+    return patrol_task
+
+
 if __name__ == '__main__':
     rospy.init_node("g4s_routine")
 
@@ -21,9 +28,13 @@ if __name__ == '__main__':
 
     routine = RobotRoutine(daily_start=start, daily_end=end, 
         idle_duration=idle_duration)    
+
+    wait_wps = ['WayPoint3', 'WayPoint4', 'WayPoint5', 'WayPoint9']
+    tasks = map(create_wait_task, wait_wps)
     
     # set tasks and start execution
-    routine.create_routine()
+    routine.create_task_routine(tasks, repeat_delta=rospy.Duration(15 * 60))
+
     routine.start_routine()
     
     rospy.spin()
