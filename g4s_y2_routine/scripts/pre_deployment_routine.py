@@ -2,11 +2,12 @@
 
 import rospy
 
-from datetime import time, date
+from datetime import time, date, timedelta
 from dateutil.tz import tzlocal
 
 from routine_behaviours.robot_routine import RobotRoutine
-    
+from strands_executive_msgs.msg import Task    
+from strands_executive_msgs import task_utils
 
 def create_wait_task(waypoint_name, duration=rospy.Duration(30)):
     patrol_task = Task(action='wait_action', start_node_id=waypoint_name, end_node_id=waypoint_name, max_duration=duration)
@@ -33,7 +34,10 @@ if __name__ == '__main__':
     tasks = map(create_wait_task, wait_wps)
     
     # set tasks and start execution
-    routine.create_task_routine(tasks, repeat_delta=rospy.Duration(15 * 60))
+    routine.create_task_routine(tasks, repeat_delta=timedelta(seconds=(15 * 60)))
+
+    routine.runner.add_day_off('Saturday')
+    routine.runner.add_day_off('Sunday')
 
     routine.start_routine()
     
