@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <name>g4s_bringup</name>
+  <version>0.0.1</version>
+  <description>
+    The g4s_bringup package provides tmux scripts and launch files specific to G4S deployment.
+  </description>
+
+  <maintainer email="cburbridge@gmail.com">Chris Burbridge</maintainer>
+
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
