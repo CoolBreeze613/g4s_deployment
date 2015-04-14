@@ -2,6 +2,9 @@
 
 SESSION=g4s
 DATABASE=/data/1f_mongo_140415
+MAP=/opt/maps/1f_pre_deployment/cs_1f_20140724-cropped.yaml
+NO_GO_MAP=/opt/maps/1f_pre_deployment/cs_1f_20140724-cropped.yaml
+TOPOLOGICAL_MAP=f_pre_deployment
 
 tmux -2 new-session -d -s $SESSION
 # Setup a window for tailing log files
@@ -74,7 +77,7 @@ tmux select-window -t $SESSION:5
 tmux split-window -v
 tmux select-pane -t 0
 tmux send-keys " clear" C-m
-tmux send-keys "roslaunch strands_bringup strands_navigation map:=!!!!! topological_map:=!!!!!"
+tmux send-keys "roslaunch strands_bringup strands_navigation map:=$MAP no_go_map:=$NO_GO_MAP topological_map:=$TOPOLOGICAL_MAP"
 tmux select-pane -t 1
 tmux split-window -h
 tmux select-pane -t 1
