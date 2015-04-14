@@ -30,13 +30,13 @@ if __name__ == '__main__':
     routine = RobotRoutine(daily_start=start, daily_end=end, 
         idle_duration=idle_duration)    
 
-    wait_wps = ['WayPoint3', 'WayPoint4', 'WayPoint5', 'WayPoint9']
+    wait_wps = ['WayPoint3', 'WayPoint4', 'WayPoint5', 'WayPoint9', 'ChargingPoint']#, 'WayPoint13']#, 'WayPoint12']
     tasks = map(create_wait_task, wait_wps)
     
     # set tasks and start execution
     routine.create_task_routine(tasks, repeat_delta=timedelta(seconds=(15 * 60)))
 
-    routine.runner.add_day_off('Saturday')
+    # routine.runner.add_day_off('Saturday')
     routine.runner.add_day_off('Sunday')
 
     routine.start_routine()
