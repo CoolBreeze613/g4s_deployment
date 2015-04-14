@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SESSION=g4s
-
+DATABASE=/data/1f_mongo_140415
 
 tmux -2 new-session -d -s $SESSION
 # Setup a window for tailing log files
@@ -27,7 +27,7 @@ tmux select-window -t $SESSION:1
 tmux split-window -v
 tmux select-pane -t 0
 tmux send-keys " clear" C-m
-tmux send-keys "roslaunch strands_bringup strands_core.launch db_path:=/data/1f_mongo_1404015"
+tmux send-keys "roslaunch strands_bringup strands_core.launch db_path:=$DATABASE"
 tmux select-pane -t 1
 tmux split-window -h
 tmux select-pane -t 1
@@ -59,7 +59,7 @@ tmux send-keys "roslaunch strands_bringup strands_cameras.launch head_camera:=fa
 tmux select-pane -t 1
 tmux send-keys " clear" C-m
 tmux send-keys "ssh strands@bobl" C-m
-tmux send-keys "roslaunch openni_launch openni.launch camera:=head_xtion"
+tmux send-keys "roslaunch openni_wrapper main.launch camera:=head_xtion"
 
 tmux select-window -t $SESSION:4
 tmux split-window -h
