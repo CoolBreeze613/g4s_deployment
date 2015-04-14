@@ -27,7 +27,7 @@ tmux select-window -t $SESSION:1
 tmux split-window -v
 tmux select-pane -t 0
 tmux send-keys " clear" C-m
-tmux send-keys "roslaunch strands_bringup strands_core.launch db_path=/data/1f_mongo_1404015"
+tmux send-keys "roslaunch strands_bringup strands_core.launch db_path:=/data/1f_mongo_1404015"
 tmux select-pane -t 1
 tmux split-window -h
 tmux select-pane -t 1
