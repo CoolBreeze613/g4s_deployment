@@ -13,6 +13,8 @@ _SRC_ENV="tmux send-keys source Space $DEVELOPMENT_WS C-m "
 
 message () { tmux send-keys " #   ===  $1  ===" C-m;  };
 
+split_4 () {tmux split-window -v; tmux select-pane -t 1; tmux split-window -h; tmux select-pane -t 0; tmux split-window -h; tmux select-pane -t 0; };
+
 tmux -2 new-session -d -s $SESSION
 # Setup a window for tailing log files
 tmux new-window -t $SESSION:0 -n 'roscore'
@@ -24,6 +26,7 @@ tmux new-window -t $SESSION:5 -n 'navigation'
 tmux new-window -t $SESSION:6 -n 'ppl_perception'
 tmux new-window -t $SESSION:7 -n 'executive'
 tmux new-window -t $SESSION:8 -n 'logging'
+tmux new-window -t $SESSION:9 -n 'object_learning'
 
 tmux select-window -t $SESSION:0
 tmux split-window -v
@@ -160,6 +163,21 @@ tmux select-window -t $SESSION:8
 tmux send-keys " clear" C-m
 message "ROS-Out logging"
 tmux send-keys "## Logging: rosout, etc ##" C-m
+
+tmux select-window -t $SESSION:9
+[ -f $DEVELOPMENT_WS ] && `$_SRC_ENV`
+tmux send-keys " clear" C-m
+split_4
+message "PTU Frame Follower"
+tmux send-keys "rosrun ptu_follow_frame ptu_follow.py "
+tmux select-pane 1
+message "Static TF Manager"
+tmux send-keys "rosrun static_transform_manager static_tf_services.py"
+tmux select-pane 2
+message "BettyL"
+tmux send-keys "ssh bobl" C-m
+tmux select-pane 3
+message "Object Learning Spare"
 
 # Set default window
 tmux select-window -t $SESSION:0
