@@ -37,7 +37,7 @@ window 1
   split_4
     pane 0
       message "Camera Tracker"
-      cmd "rosrun camera_tracker  camera_tracker_service camera:=/head_xtion/points_registered"
+      cmd "rosrun camera_tracker camera_tracker_service _camera_topic:=/head_xtion/depth_registered"
     pane 1
       message "Object Learning service"
       cmd "rosrun dynamic_object_learning do_learning_service"
