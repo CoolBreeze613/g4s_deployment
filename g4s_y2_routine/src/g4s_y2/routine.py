@@ -2,7 +2,7 @@
 
 import rospy
 from routine_behaviours.patrol_routine import PatrolRoutine
-from task_executor.task_routine import unix_time, delta_between
+from task_executor.task_routine import unix_time, delta_between, time_less_than, time_greater_than
 from dateutil.tz import *
 from datetime import *
 import random
@@ -161,6 +161,7 @@ class G4SRoutine(PatrolRoutine):
         """
         Called when the robot is idle
         """
+        rospy.loginfo('G4SRoutine.on_idle')
         # generate a random waypoint visit on idle
         people_track_wps=['WayPoint13', 'WayPoint18', 'WayPoint9','WayPoint11','WayPoint5','WayPoint3', 'WayPoint14', 'WayPoint10', 'WayPoint6']
         people_track_wps_lunch=['WayPoint14', 'WayPoint10', 'WayPoint6']
@@ -170,7 +171,7 @@ class G4SRoutine(PatrolRoutine):
         eleven_thirty = time(11,30, tzinfo=localtz)
         fourteen_thirty = time(14,30, tzinfo=localtz)
         
-        if current_time > eleven_thirty and current_time < fourteen_thirty:
+        if time_greater_than(current_time, eleven_thirty) and time_less_than(current_time, fourteen_thirty):
             task = create_wait_task(random.choice(people_track_wps_lunch))
         else:
             task = create_wait_task(random.choice(people_track_wps))

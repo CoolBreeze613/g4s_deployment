@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
     routine.random_nodes = ['WayPoint7', 'WayPoint10', 'WayPoint11', 'WayPoint12', 'WayPoint13', 'WayPoint16', 'ChargingPoint']
 
-    routine.runner.add_day_off('Saturday')
-    routine.runner.add_day_off('Sunday')
+    # routine.runner.add_day_off('Saturday')
+    # routine.runner.add_day_off('Sunday')
 
     routine.start_routine()
     
