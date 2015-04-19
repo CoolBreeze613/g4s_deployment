@@ -2,7 +2,7 @@
 
 import rospy
 from routine_behaviours.patrol_routine import PatrolRoutine
-from task_executor.task_routine import unix_time
+from task_executor.task_routine import unix_time, delta_between
 from dateutil.tz import *
 from datetime import *
 import random
@@ -89,63 +89,70 @@ class G4SRoutine(PatrolRoutine):
         object_search_wps=['WayPoint1', 'WayPoint2', 'WayPoint3']
         door_wps=['WayPoint7', 'WayPoint4']
         
+        morning_start = eight_forty_five
+        morning_duration = delta_between(eleven_thirty, morning_start)
         
-        
+        lunch_start = eleven_thirty
+        lunch_duration = delta_between(fourteen_thirty, lunch_start)
+
+        afternoon_start = fourteen_thirty
+        afternoon_duration = delta_between(seventeen_fifteen, afternoon_start)
+
         tasks = []
         for i in range(4):
             #morning
             task=create_metric_map_task(random.choice(metric_wps))
-            self.set_random_task_time(task, date_today, eight_forty_five, eleven_thirty-eight_forty_five)
+            self.set_random_task_time(task, date_today, morning_start, morning_duration)
             tasks.append(task)
             
             task=create_door_check_task(random.choice(door_wps))
-            self.set_random_task_time(task, date_today, eight_forty_five, eleven_thirty-eight_forty_five)
+            self.set_random_task_time(task, date_today, morning_start, morning_duration)
             tasks.append(task)
             
             if i<3:
                 task=create_object_learn_task(random.choice(object_learn_wps))
-                self.set_random_task_time(task, date_today, eight_forty_five, eleven_thirty-eight_forty_five)
+                self.set_random_task_time(task, date_today, morning_start, morning_duration)
                 tasks.append(task)
                 
                 task=create_object_search_task(random.choice(object_search_wps))
-                self.set_random_task_time(task, date_today, eight_forty_five, eleven_thirty-eight_forty_five)
+                self.set_random_task_time(task, date_today, morning_start, morning_duration)
                 tasks.append(task)
                 
             #lunch (less tasks because we want the robot mostly learning people tracks)
             if i<1:
                 task=create_metric_map_task(random.choice(metric_wps))
-                self.set_random_task_time(task, date_today, eleven_thirty, fourteen_thirty-eleven_thirty)
+                self.set_random_task_time(task, date_today, lunch_start, lunch_duration)
                 tasks.append(task)
             
                 task=create_door_check_task(random.choice(door_wps))
-                self.set_random_task_time(task, date_today, fourteen_thirty,  eleven_thirty, fourteen_thirty-eleven_thirty)
+                self.set_random_task_time(task, date_today,   lunch_start, lunch_duration)
                 tasks.append(task)
             
                 task=create_object_learn_task(random.choice(object_learn_wps))
-                self.set_random_task_time(task, date_today, fourteen_thirty,  eleven_thirty, fourteen_thirty-eleven_thirty)
+                self.set_random_task_time(task, date_today,  lunch_start, lunch_duration)
                 tasks.append(task)
                 
                 task=create_object_search_task(random.choice(object_search_wps))
-                self.set_random_task_time(task, date_today, fourteen_thirty,  eleven_thirty, fourteen_thirty-eleven_thirty)
+                self.set_random_task_time(task, date_today,   lunch_start, lunch_duration)
                 tasks.append(task)
             
                 
             #afternoon
             task=create_metric_map_task(random.choice(metric_wps))
-            self.set_random_task_time(task, date_today, fourteen_thirty, seventeen_fifteen-fourteen_thirty)
+            self.set_random_task_time(task, date_today, afternoon_start, afternoon_duration)
             tasks.append(task)
             
             task=create_door_check_task(random.choice(door_wps))
-            self.set_random_task_time(task, date_today, fourteen_thirty, seventeen_fifteen-fourteen_thirty)
+            self.set_random_task_time(task, date_today, afternoon_start, afternoon_duration)
             tasks.append(task)
             
             if i<3:
                 task=create_object_learn_task(random.choice(object_learn_wps))
-                self.set_random_task_time(task, date_today, fourteen_thirty, seventeen_fifteen-fourteen_thirty)
+                self.set_random_task_time(task, date_today, afternoon_start, afternoon_duration)
                 tasks.append(task)
                 
                 task=create_object_search_task(random.choice(object_search_wps))
-                self.set_random_task_time(task, date_today, fourteen_thirty, seventeen_fifteen-fourteen_thirty)
+                self.set_random_task_time(task, date_today, afternoon_start, afternoon_duration)
                 tasks.append(task)
         return tasks
 
@@ -159,14 +166,16 @@ class G4SRoutine(PatrolRoutine):
         people_track_wps_lunch=['WayPoint14', 'WayPoint10', 'WayPoint6']
         
         localtz = tzlocal()
-        current_time = datetime.fromtimestamp(rospy.get_rostime().to_sec(), tz=localtz)
+        current_time = datetime.fromtimestamp(rospy.get_rostime().to_sec(), tz=localtz).time()
+        eleven_thirty = time(11,30, tzinfo=localtz)
+        fourteen_thirty = time(14,30, tzinfo=localtz)
         
-        if current_time IS BETWEEN 11h30 AND 14H30:
-            task=create_wait_task(random.people_track_wps_lunch)
+        if current_time > eleven_thirty and current_time < fourteen_thirty:
+            task = create_wait_task(random.choice(people_track_wps_lunch))
         else:
-            task=create_wait_task(random.people_track_wps)
+            task = create_wait_task(random.choice(people_track_wps))
              
-        ADD (OR DEMAND?) task
+        self.add_tasks([task])
         
         
           
