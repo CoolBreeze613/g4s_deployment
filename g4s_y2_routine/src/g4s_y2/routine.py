@@ -83,7 +83,13 @@ class G4SRoutine(PatrolRoutine):
         eleven_thirty= time(11,30, tzinfo=localtz)
         fourteen_thirty=time(14,30, tzinfo=localtz)
         seventeen_fifteen= time(17,15, tzinfo=localtz)
+        past_bedtime = time(23,59, tzinfo=localtz)
         
+        # day_end = seventeen_fifteen
+        day_end = past_bedtime
+
+
+
         metric_wps=['WayPoint13', 'WayPoint18', 'WayPoint9','WayPoint11','WayPoint5','WayPoint3']        
         object_learn_wps=['WayPoint13', 'WayPoint18', 'WayPoint9', 'WayPoint11']        
         object_search_wps=['WayPoint1', 'WayPoint2', 'WayPoint3']
@@ -96,7 +102,7 @@ class G4SRoutine(PatrolRoutine):
         lunch_duration = delta_between(fourteen_thirty, lunch_start)
 
         afternoon_start = fourteen_thirty
-        afternoon_duration = delta_between(seventeen_fifteen, afternoon_start)
+        afternoon_duration = delta_between(day_end, afternoon_start)
 
         tasks = []
         for i in range(4):
