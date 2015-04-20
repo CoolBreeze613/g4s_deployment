@@ -21,11 +21,13 @@ def create_metric_map_task(waypoint_name, duration=rospy.Duration(120)):
     return task
 
 def create_object_learn_task(waypoint_name, duration=rospy.Duration(240)):
-    task = Task(action='OBJECT_LEARN_ACTION_SERVER', max_duration=duration, start_node_id=waypoint_name)
+    task = Task(action='learn_object', max_duration=duration, start_node_id=waypoint_name)
+    task_utils.add_string_argument(task, waypoint_name)
     return task
 
 def create_object_search_task(waypoint_name, duration=rospy.Duration(480)):
-    task = Task(action='OBJECT_SEARCH_ACTION_SERVER', max_duration=duration, start_node_id=waypoint_name)
+    task = Task(action='search_object', max_duration=duration, start_node_id=waypoint_name)
+    task_utils.add_string_argument(task, waypoint_name)
     return task
 
 def create_door_check_task(waypoint_name, duration=rospy.Duration(5)):
@@ -105,6 +107,31 @@ class G4SRoutine(PatrolRoutine):
         afternoon_duration = delta_between(day_end, afternoon_start)
 
         tasks = []
+        
+        #door checks at fixed times (to evaluate system ability to do stuff at corret times)
+        task=create_door_check_task(door_wps[0])
+        start_time=datetime.combine(date_today, time(10,30, tzinfo=localtz))
+        end_time = start_time+timedelta(seconds=30)
+        task.start_after=rospy.Time(unix_time(start_time))
+        task.end_before=rospy.Time(unix_time(end_time))
+        tasks.append(task)
+        
+        task=create_door_check_task(door_wps[0])
+        start_time=datetime.combine(date_today, time(13,30, tzinfo=localtz))
+        end_time = start_time+timedelta(seconds=30)
+        task.start_after=rospy.Time(unix_time(start_time))
+        task.end_before=rospy.Time(unix_time(end_time))
+        tasks.append(task)
+        
+        task=create_door_check_task(door_wps[0])
+        start_time=datetime.combine(date_today, time(16,30, tzinfo=localtz))
+        end_time = start_time+timedelta(seconds=30)
+        task.start_after=rospy.Time(unix_time(start_time))
+        task.end_before=rospy.Time(unix_time(end_time))
+        tasks.append(task)
+        
+        
+        #random tasks
         for i in range(4):
             #morning
             task=create_metric_map_task(random.choice(metric_wps))
