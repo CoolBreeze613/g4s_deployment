@@ -13,7 +13,7 @@ _SRC_ENV="tmux send-keys source Space $DEVELOPMENT_WS C-m "
 
 message () { tmux send-keys " #   ===  $1  ===" C-m;  };
 
-split_4 () {tmux split-window -v; tmux select-pane -t 1; tmux split-window -h; tmux select-pane -t 0; tmux split-window -h; tmux select-pane -t 0; };
+split_4 () { tmux split-window -v; tmux select-pane -t 1; tmux split-window -h; tmux select-pane -t 0; tmux split-window -h; tmux select-pane -t 0; };
 
 tmux -2 new-session -d -s $SESSION
 # Setup a window for tailing log files
@@ -27,6 +27,8 @@ tmux new-window -t $SESSION:6 -n 'ppl_perception'
 tmux new-window -t $SESSION:7 -n 'executive'
 tmux new-window -t $SESSION:8 -n 'logging'
 tmux new-window -t $SESSION:9 -n 'object_learning'
+tmux new-window -t $SESSION:10 -n 'offline_learning'
+tmux new-window -t $SESSION:11 -n 'novelty_detection'
 
 tmux select-window -t $SESSION:0
 tmux split-window -v
@@ -127,9 +129,21 @@ message "Spare nav..."
 
 tmux select-window -t $SESSION:6
 [ -f $DEVELOPMENT_WS ] && `$_SRC_ENV`
+tmux split-window -h
+tmux split-window -v
+tmux select-pane -t 0
 tmux send-keys " clear" C-m
 message "Person Tracker"
 tmux send-keys "roslaunch perception_people_launch people_tracker_robot.launch"
+tmux select-pane -t 1
+tmux send-keys " clear" C-m
+message "Trajectory Logger"
+tmux send-keys "roslaunch human_trajectory trajectory_publisher.py 1.0 1"
+tmux select-pane -t 2
+tmux send-keys " clear" C-m
+message "Robot Pose Logger"
+tmux send-keys "rosrun mongodb_log mongodb_log.py /robot_pose"
+
 
 tmux select-window -t $SESSION:7
 tmux split-window -h
@@ -178,6 +192,39 @@ message "BettyL"
 tmux send-keys "ssh bobl" C-m
 tmux select-pane 3
 message "Object Learning Spare"
+
+tmux select-window -t $SESSION:10
+[ -f $DEVELOPMENT_WS ] && `$_SRC_ENV`
+tmux send-keys " clear" C-m
+tmux split-window -h
+tmux select-pane -t 0
+tmux send-keys " clear" C-m
+message "QSRLib Service"
+tmux send-keys "rosrun qsr_lib qsrlib_ros_server.py"
+tmux select-pane -t 1
+tmux send-keys " clear" C-m
+message "Offline Learning"
+tmux send-keys "rosrun relational_learner OfflineLearning_action.py"
+
+tmux select-window -t $SESSION:11
+[ -f $DEVELOPMENT_WS ] && `$_SRC_ENV`
+split_4
+tmux send-keys " clear" C-m
+message "Episode Server"
+tmux send-keys "rosrun relational_learner episodes_server.py"
+tmux select-pane -t 1
+tmux send-keys " clear" C-m
+message "Episode Client"
+tmux send-keys "rosrun relational_learner episodes_client.py"
+tmux select-pane -t 2
+tmux send-keys " clear" C-m
+message "Novelty Server"
+tmux send-keys "rosrun relational_learner novelty_server.py"
+tmux select-pane -t 3
+tmux send-keys " clear" C-m
+message "Novelty Client"
+tmux send-keys "rosrun relational_learner novelty_client.py"
+
 
 # Set default window
 tmux select-window -t $SESSION:0
